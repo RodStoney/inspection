@@ -1,1 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SentinelClean™ — Post-Cleaning Inspection</title>
+<style>
+:root {
+  --green:    #166534;
+  --green-lt: #22c55e;
+  --green-bg: #f0fdf4;
+  --green-bd: #dcfce7;
+  --amber:    #92400e;
+  --amber-bg: #fef3c7;
+  --amber-bd: #fde68a;
+  --gray:     #6b7280;
+  --gray-bg:  #f3f4f6;
+  --red:      #991b1b;
+  --red-bg:   #fff5f5;
+  --border:   #e5e7eb;
+  --text:     #111827;
+  --subtext:  #4b5563;
+  --faint:    #9ca3af;
+  --white:    #ffffff;
+  --font-body: Georgia, 'Times New Roman', serif;
+  --font-mono: 'Courier New', Courier, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);background:var(--green-bg);color:var(--text);min-height:100vh}
+button{cursor:pointer;font-family:var(--font-mono);transition:opacity .15s,background .15s}
+button:hover{opacity:.85}
+input,textarea{font-family:var(--font-body);color:var(--text)}
+textarea{resize:vertical}
 
+/* Header */
+#app-header{background:#fff;border-bottom:3px solid var(--green-lt);padding:18px 20px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.header-inner{max-width:960px;margin:0 auto}
+.header-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.header-logo-box{width:42px;height:42px;border-radius:8px;background:var(--green-bg);border:2px solid var(--green-bd);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.header-title-block{flex:1}
+.header-eyebrow{font-size:10px;letter-spacing:.25em;color:var(--faint);text-transform:uppercase;font-family:var(--font-mono);margin-bottom:2px}
+.header-title{font-size:clamp(15px,2.6vw,21px);font-weight:700;color:var(--text)}
+.header-brand{display:flex;align-items:center;gap:10px;padding-left:14px;border-left:1px solid var(--border)}
+.brand-name{font-size:13px;font-weight:700;color:var(--text)}
+.brand-tag{font-size:10px;color:var(--green-lt);font-family:var(--font-mono);font-weight:700;letter-spacing:.08em}
+.score-badge{text-align:center;border-radius:10px;padding:7px 14px;min-width:72px}
+.score-badge .pct{font-size:22px;font-weight:800;line-height:1}
+.score-badge .lbl{font-size:9px;letter-spacing:.12em;margin-top:2px;font-family:var(--font-mono)}
+#btn-history{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700}
+#btn-history.active{background:var(--green);color:#fff}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{background:transparent;color:var(--gray);border:none;padding:8px 12px;border-radius:6px 6px 0 0;font-size:12px;font-weight:400;white-space:nowrap;font-family:var(--font-mono)}
+.tab-btn.active{color:#fff;font-weight:700}
+
+/* Body */
+#app-body{max-width:960px;margin:0 auto;padding:18px 14px 80px}
+
+/* Cards */
+.card{background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:14px;overflow:hidden}
+.card-head{padding:11px 16px;background:#f9fafb;border-bottom:1px solid var(--border);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-family:var(--font-mono);color:var(--faint)}
+.card-body{padding:16px}
+
+/* Banner */
+.scenario-banner{border-left:4px solid #ccc;background:#fff;border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.scenario-eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:4px}
+.scenario-text{font-size:13px;color:var(--subtext);line-height:1.65}
+
+/* Fields grid */
+.fields-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+.field-label{font-size:10px;color:var(--gray);font-family:var(--font-mono);letter-spacing:.08em;margin-bottom:5px}
+.field-input{width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;transition:border-color .15s}
+.field-input:focus{border-color:var(--green-lt)}
+
+/* Action bar */
+.action-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.btn-print{background:#1f2937;color:#fff;border:none;border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700}
+.btn-email{color:#fff;border:none;border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700}
+.btn-save{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700}
+.btn-save.flash{background:var(--green);color:#fff}
+.btn-new{background:var(--red-bg);color:var(--red);border:1px solid #fecaca;border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700}
+.btn-email.flash{background:var(--green)!important}
+.action-counts{margin-left:auto;display:flex;gap:12px;font-size:12px;font-family:var(--font-mono)}
+.cnt-done{color:var(--green);font-weight:700}
+.cnt-redo{color:var(--amber);font-weight:700}
+.cnt-skip{color:var(--gray)}
+
+/* Legend */
+.legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:11px;font-family:var(--font-mono);color:var(--faint);margin-bottom:14px}
+.legend-pill{padding:2px 10px;border-radius:20px;font-weight:700;font-size:11px}
+
+/* Category block */
+.cat-block{background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.cat-head{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:#f9fafb;border-bottom:1px solid transparent;user-select:none}
+.cat-head.open{border-bottom-color:var(--border)}
+.cat-head:hover{background:#f3f4f6}
+.cat-left{display:flex;align-items:center;gap:10px}
+.cat-bar{width:3px;height:16px;border-radius:2px;background:var(--green-lt);flex-shrink:0}
+.cat-name{font-size:14px;font-weight:700;color:var(--text)}
+.cat-count{font-size:10px;color:#d1d5db;font-family:var(--font-mono)}
+.cat-pills{display:flex;gap:6px;align-items:center}
+.cat-pill{font-size:10px;padding:2px 8px;border-radius:20px;font-family:var(--font-mono)}
+.cat-pill.redo{background:var(--amber-bg);color:var(--amber)}
+.cat-pill.done{background:var(--green-bg);color:var(--green)}
+.cat-chevron{color:#d1d5db;font-size:14px;margin-left:4px;transition:transform .2s}
+.cat-head.open .cat-chevron{transform:rotate(180deg)}
+
+/* Item row */
+.item-row{border-bottom:1px solid #f9fafb}
+.item-row:last-child{border-bottom:none}
+.item-row.done-row{background:#f8fff8}
+.item-row.redo-row{background:#fffdf0}
+.item-main{padding:9px 16px;display:flex;align-items:center;gap:10px}
+.item-bar{width:3px;align-self:stretch;border-radius:2px;flex-shrink:0;background:#e5e7eb}
+.item-bar.scored-done{background:var(--green)}
+.item-bar.scored-redo{background:#f59e0b}
+.item-bar.scored-skip{background:var(--gray)}
+.item-label{flex:1;font-size:13px;color:#374151;line-height:1.5}
+.item-icons{font-size:10px;color:var(--faint);font-family:var(--font-mono);margin-left:6px}
+.item-btns{display:flex;gap:4px;flex-shrink:0;align-items:center}
+.score-btn{background:#f9fafb;color:var(--faint);border:1px solid var(--border);border-radius:5px;padding:5px 9px;font-size:10px;font-weight:700}
+.score-btn.active-done{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+.score-btn.active-redo{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
+.score-btn.active-skip{background:var(--gray-bg);color:var(--gray);border-color:#d1d5db}
+.note-toggle{background:#f9fafb;color:var(--gray);border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px}
+.note-toggle.open{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+
+/* Note panel */
+.note-panel{padding:0 16px 12px 29px;display:flex;flex-direction:column;gap:8px}
+.note-textarea{width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;outline:none;min-height:60px;color:var(--text);font-family:var(--font-body)}
+.note-textarea:focus{border-color:var(--green-lt)}
+.photo-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn-photo{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700}
+.photo-thumb{height:48px;border-radius:4px;border:1px solid var(--border);object-fit:cover}
+.btn-rm-photo{background:var(--red-bg);color:var(--red);border:1px solid #fecaca;border-radius:5px;padding:5px 8px;font-size:11px}
+
+/* Monday.com button */
+.btn-monday{background:#f94f69;color:#fff;border:none;border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.btn-monday:disabled{opacity:.5;cursor:not-allowed}
+.btn-monday .mon-icon{font-size:14px}
+
+/* Monday settings modal */
+#monday-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center}
+#monday-modal-overlay.open{display:flex}
+#monday-modal{background:#fff;border-radius:12px;padding:28px;max-width:480px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.mon-modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px}
+.mon-modal-sub{font-size:12px;color:var(--faint);margin-bottom:20px;line-height:1.5}
+.mon-field{margin-bottom:14px}
+.mon-field label{display:block;font-size:11px;font-family:var(--font-mono);color:var(--gray);letter-spacing:.08em;margin-bottom:5px}
+.mon-field input{width:100%;border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:13px;outline:none;transition:border-color .15s}
+.mon-field input:focus{border-color:#f94f69}
+.mon-hint{font-size:11px;color:var(--faint);margin-top:4px;line-height:1.4}
+.mon-modal-btns{display:flex;gap:10px;margin-top:20px}
+.btn-mon-save{background:#f94f69;color:#fff;border:none;border-radius:7px;padding:10px 20px;font-size:13px;font-weight:700;flex:1}
+.btn-mon-cancel{background:#f3f4f6;color:#374151;border:1px solid var(--border);border-radius:7px;padding:10px 16px;font-size:13px}
+#monday-status{margin-top:12px;font-size:12px;padding:10px 14px;border-radius:6px;display:none}
+#monday-status.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+#monday-status.error{background:#fff5f5;color:#991b1b;border:1px solid #fecaca}
+#monday-status.loading{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+
+/* Category photo gallery */
+.cat-photo-section{border-top:1px solid var(--border);padding:12px 16px;background:#f9fafb}
+.cat-photo-label{font-size:10px;font-family:var(--font-mono);color:var(--faint);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.cat-photo-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn-cat-photo{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;padding:7px 13px;font-size:11px;font-weight:700}
+.cat-photo-thumb-wrap{position:relative;display:inline-block}
+.cat-photo-thumb{height:56px;width:56px;border-radius:5px;border:1px solid var(--border);object-fit:cover;cursor:pointer}
+.btn-rm-cat-photo{position:absolute;top:-5px;right:-5px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;line-height:18px;text-align:center;padding:0;font-weight:700}
+
+/* Reset confirm */
+#reset-confirm{background:#fff8f8;border:1px solid #fecaca;border-radius:8px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+#reset-confirm .msg{font-size:14px;font-weight:700;color:var(--red)}
+#reset-confirm .btns{display:flex;gap:8px}
+
+/* History panel */
+#history-panel{background:var(--green);color:#f9fafb;padding:16px;border-bottom:2px solid #14532d}
+.history-inner{max-width:960px;margin:0 auto}
+.history-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.history-title{font-size:12px;font-family:var(--font-mono);font-weight:700;letter-spacing:.1em}
+.btn-close-hist{background:transparent;color:#86efac;border:none;font-size:22px;line-height:1}
+.history-empty{font-size:13px;color:#86efac;font-family:var(--font-mono)}
+.history-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.hist-card{background:#14532d;border-radius:8px;padding:12px}
+.hist-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.hist-client{font-size:13px;font-weight:700;color:#f9fafb}
+.hist-sub{font-size:11px;color:#86efac;margin-top:2px}
+.hist-pct{font-size:20px;font-weight:800;color:#4ade80}
+.hist-btns{display:flex;gap:6px}
+.btn-load-hist{flex:1;background:#4ade8022;color:#4ade80;border:1px solid #4ade8044;border-radius:5px;padding:6px;font-size:11px;font-weight:700}
+.btn-del-hist{background:#f8717122;color:#f87171;border:1px solid #f8717144;border-radius:5px;padding:6px 10px;font-size:11px}
+
+/* Summary */
+#summary{background:#fff;border-radius:8px;padding:22px;margin-top:18px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.summary-status{padding:12px 16px;border-radius:8px;text-align:center;font-size:13px;font-weight:700;font-family:var(--font-mono);letter-spacing:.08em;margin-bottom:16px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:10px;margin-bottom:16px}
+.stat-box{text-align:center;border-radius:8px;padding:10px 4px}
+.stat-val{font-size:22px;font-weight:800;line-height:1}
+.stat-lbl{font-size:9px;letter-spacing:.1em;font-family:var(--font-mono);margin-top:4px;opacity:.7}
+.redo-list{background:var(--amber-bg);border:1px solid var(--amber-bd);border-radius:6px;padding:14px 16px;margin-bottom:16px}
+.redo-list-title{font-size:10px;color:var(--amber);font-family:var(--font-mono);letter-spacing:.15em;margin-bottom:10px}
+.redo-item{font-size:13px;color:#78350f;padding:5px 0;border-bottom:1px solid #fef3c7;display:flex;align-items:center;gap:8px}
+.redo-item:last-child{border-bottom:none}
+.inspector-row{padding:12px 14px;background:#f9fafb;border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--gray);line-height:1.9;margin-bottom:16px}
+.inspector-row strong{color:#374151}
+
+/* Signature */
+.sig-block{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px}
+.sig-head{padding:10px 14px;background:#f9fafb;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.sig-head-label{font-size:10px;color:var(--gray);font-family:var(--font-mono);letter-spacing:.1em}
+.sig-head-btns{display:flex;gap:8px}
+.btn-sign{background:var(--green);color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:11px;font-weight:700}
+.btn-resign{background:var(--green);color:#fff;border:none;border-radius:5px;padding:5px 12px;font-size:11px;font-weight:700}
+.btn-clrsig{background:var(--red-bg);color:var(--red);border:1px solid #fecaca;border-radius:5px;padding:5px 10px;font-size:11px}
+#sig-canvas-wrap{padding:14px}
+#sig-canvas{width:100%;height:120px;border:1px dashed #d1d5db;border-radius:6px;cursor:crosshair;display:block;touch-action:none}
+.sig-canvas-btns{display:flex;gap:8px;margin-top:10px}
+.btn-sig-confirm{background:var(--green);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:700}
+.btn-sig-clear{background:#f3f4f6;color:#374151;border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:12px}
+.btn-sig-cancel{background:var(--red-bg);color:var(--red);border:1px solid #fecaca;border-radius:6px;padding:8px 12px;font-size:12px}
+.sig-image-wrap{padding:14px}
+.sig-image-wrap img{height:70px;border:1px solid var(--border);border-radius:4px}
+.sig-by{font-size:11px;color:var(--faint);margin-top:6px;font-family:var(--font-mono)}
+.sig-empty{padding:20px 14px;color:var(--faint);font-size:12px;font-style:italic;text-align:center}
+
+/* Sentinel footer in summary */
+.sentinel-footer{padding:10px 14px;background:var(--green-bg);border:1px solid var(--green-bd);border-left:3px solid var(--green-lt);border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.sentinel-name{font-size:12px;font-weight:700;color:var(--green);font-family:var(--font-mono);letter-spacing:.05em}
+.sentinel-sub{font-size:11px;color:var(--gray);margin-left:8px}
+.sentinel-copy{font-size:10px;color:var(--faint);font-family:var(--font-mono)}
+
+@media print {
+  .no-print{display:none!important}
+  body{background:#fff!important}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  #app-header{position:static!important;box-shadow:none!important}
+}
+@media(max-width:500px){
+  .header-brand{display:none}
+  .fields-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div id="app-header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="header-logo-box">✓</div>
+      <div class="header-title-block">
+        <div class="header-eyebrow">Post-Cleaning Inspection</div>
+        <div class="header-title">SentinelClean™ Inspection Report</div>
+      </div>
+      <div class="header-brand">
+        <div>
+          <div class="brand-name">Sarasota Cleaning</div>
+          <div class="brand-tag">SentinelClean™</div>
+        </div>
+      </div>
+      <div id="score-badge-wrap" style="display:none">
+        <div class="score-badge" id="score-badge">
+          <div class="pct" id="score-pct">0%</div>
+          <div class="lbl" id="score-lbl">PROGRESS</div>
+        </div>
+      </div>
+      <button id="btn-history" class="no-print">📋 History</button>
+      <button id="btn-monday-settings" class="no-print" title="monday.com settings" style="background:#f94f69;color:#fff;border:none;border-radius:8px;padding:7px 11px;font-size:14px">⚙</button>
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+</div>
+
+<!-- ══ MONDAY SETTINGS MODAL ══ -->
+<div id="monday-modal-overlay">
+  <div id="monday-modal">
+    <div class="mon-modal-title">🔗 monday.com Integration</div>
+    <div class="mon-modal-sub">Connect your monday.com account to export inspections as board items. Each inspection exports as one summary row with compliance score, redo count, and inspector details.</div>
+    <div class="mon-field">
+      <label>API TOKEN</label>
+      <input type="password" id="mon-api-token" placeholder="eyJhbGciOiJIUzI1NiJ9..."/>
+      <div class="mon-hint">Settings → Developers → API → Personal API token. Keep this private — it is stored only in this browser.</div>
+    </div>
+    <div class="mon-field">
+      <label>BOARD ID</label>
+      <input type="text" id="mon-board-id" placeholder="e.g. 1234567890"/>
+      <div class="mon-hint">Open the board in monday.com. The Board ID is the number in the URL: monday.com/boards/<strong>1234567890</strong></div>
+    </div>
+    <div class="mon-field">
+      <label>GROUP NAME <span style="font-weight:400;color:var(--faint)">(optional — defaults to first group)</span></label>
+      <input type="text" id="mon-group-name" placeholder="e.g. Completed Inspections"/>
+      <div class="mon-hint">Leave blank to add to the board's default group. Group names are case-sensitive.</div>
+    </div>
+    <div id="monday-status"></div>
+    <div class="mon-modal-btns">
+      <button class="btn-mon-save" id="btn-mon-save">Save Settings</button>
+      <button class="btn-mon-cancel" id="btn-mon-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HISTORY PANEL ══ -->
+<div id="history-panel" style="display:none">
+  <div class="history-inner">
+    <div class="history-header">
+      <div class="history-title">SAVED INSPECTIONS</div>
+      <button class="btn-close-hist no-print" id="btn-close-hist">×</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<!-- ══ BODY ══ -->
+<div id="app-body">
+  <!-- scenario banner -->
+  <div class="scenario-banner" id="scenario-banner">
+    <div class="scenario-eyebrow" id="scenario-eyebrow"></div>
+    <div class="scenario-text" id="scenario-text"></div>
+  </div>
+
+  <!-- inspection details -->
+  <div class="card">
+    <div class="card-head">Inspection Details</div>
+    <div class="card-body">
+      <div class="fields-grid">
+        <div><div class="field-label">CLIENT / PROPERTY</div><input class="field-input" id="f-client" type="text" placeholder="e.g. Villa Bella"/></div>
+        <div><div class="field-label">LOCATION</div><input class="field-input" id="f-loc" type="text" placeholder="e.g. 123 Main St"/></div>
+        <div><div class="field-label">INSPECTOR NAME</div><input class="field-input" id="f-inspector" type="text" placeholder="Your full name"/></div>
+        <div><div class="field-label">YOUR COMPANY</div><input class="field-input" id="f-company" type="text" placeholder="Sarasota Cleaning"/></div>
+        <div><div class="field-label">DATE</div><input class="field-input" id="f-date" type="date"/></div>
+        <div><div class="field-label">TIME</div><input class="field-input" id="f-time" type="time"/></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- action bar -->
+  <div class="action-bar no-print">
+    <button class="btn-print" onclick="window.print()">🖨 Print / PDF</button>
+    <button class="btn-email" id="btn-email">✉ Copy for Email</button>
+    <button class="btn-monday no-print" id="btn-monday">📤 Export to monday</button>
+    <button class="btn-save" id="btn-save">💾 Save</button>
+    <button class="btn-new" id="btn-new">↺ New</button>
+    <div class="action-counts" id="action-counts" style="display:none">
+      <span class="cnt-done" id="cnt-done">✓ 0</span>
+      <span class="cnt-redo" id="cnt-redo">↺ 0</span>
+      <span class="cnt-skip" id="cnt-skip">— 0</span>
+    </div>
+  </div>
+
+  <!-- reset confirm -->
+  <div id="reset-confirm" style="display:none">
+    <div class="msg">Start a fresh inspection?</div>
+    <div class="btns">
+      <button onclick="saveFirst()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:8px 13px;font-size:12px;font-weight:700;font-family:var(--font-mono)">Save first, then reset</button>
+      <button onclick="doReset()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:8px 13px;font-size:12px;font-weight:700;font-family:var(--font-mono)">Reset without saving</button>
+      <button onclick="document.getElementById('reset-confirm').style.display='none'" style="background:#f3f4f6;color:#374151;border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:12px;font-family:var(--font-mono)">Cancel</button>
+    </div>
+  </div>
+
+  <!-- legend -->
+  <div class="legend no-print">
+    <span>STATUS →</span>
+    <span class="legend-pill" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)">✓ Done</span>
+    <span class="legend-pill" style="background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)">↺ Redo</span>
+    <span class="legend-pill" style="background:var(--gray-bg);color:var(--gray);border:1px solid #d1d5db">— Skip</span>
+  </div>
+
+  <!-- categories container -->
+  <div id="categories"></div>
+
+  <!-- summary -->
+  <div id="summary" style="display:none">
+    <div class="summary-status" id="summary-status"></div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div id="redo-list-wrap" style="display:none">
+      <div class="redo-list">
+        <div class="redo-list-title">↺ ITEMS REQUIRING REDO</div>
+        <div id="redo-list-items"></div>
+      </div>
+    </div>
+    <div class="inspector-row" id="inspector-row"></div>
+    <!-- signature -->
+    <div class="sig-block">
+      <div class="sig-head">
+        <div class="sig-head-label">INSPECTOR SIGNATURE</div>
+        <div class="sig-head-btns no-print" id="sig-head-btns">
+          <button class="btn-sign" id="btn-sign" onclick="startSig()">Sign here</button>
+        </div>
+      </div>
+      <div id="sig-canvas-wrap" style="display:none">
+        <canvas id="sig-canvas"></canvas>
+        <div class="sig-canvas-btns">
+          <button class="btn-sig-confirm" onclick="confirmSig()">✓ Confirm Signature</button>
+          <button class="btn-sig-clear" onclick="clearSigCanvas()">Clear</button>
+          <button class="btn-sig-cancel" onclick="cancelSig()">Cancel</button>
+        </div>
+      </div>
+      <div id="sig-image-wrap" style="display:none" class="sig-image-wrap">
+        <img id="sig-img" src="" alt="Signature"/>
+        <div class="sig-by" id="sig-by"></div>
+      </div>
+      <div id="sig-empty" class="sig-empty">No signature yet — tap "Sign here" to sign on screen</div>
+    </div>
+    <!-- sentinel footer -->
+    <div class="sentinel-footer">
+      <div><span class="sentinel-name">SentinelClean™</span><span class="sentinel-sub">— Compliance-grade cleaning by Sarasota Cleaning</span></div>
+      <div class="sentinel-copy" id="sentinel-copy"></div>
+    </div>
+    <!-- bottom action bar -->
+    <div class="action-bar no-print">
+      <button class="btn-print" onclick="window.print()">🖨 Print / PDF</button>
+      <button class="btn-email" id="btn-email2">✉ Copy for Email</button>
+      <button class="btn-monday no-print" id="btn-monday2">📤 Export to monday</button>
+      <button class="btn-save" id="btn-save2">💾 Save</button>
+      <button class="btn-new" id="btn-new2">↺ New Inspection</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════
+const INDUSTRIES = [
+  {
+    id:"airbnb", label:"Airbnb Turnover", icon:"🏠", accent:"#e85d4a",
+    scenario:"Full Turnover Clean",
+    intro:"Guest turnover checklist — every item must be verified before the next check-in. A single missed item = a 1-star review. This inspection is your final gate.",
+    categories:[
+      {name:"Entry & Living Room",items:[
+        "Front door, handle, keybox — wiped, no fingerprints",
+        "Floors vacuumed or mopped edge-to-edge",
+        "Furniture dusted including legs and undersides",
+        "Couch cushions flipped, fluffed, free of crumbs",
+        "TV remote — sanitized, batteries checked",
+        "Windows and sills — wiped, no streaks",
+        "Throw blankets folded neatly",
+        "Trash emptied, new liner in place",
+        "Decorative items reset to standard layout",
+        "Light switches and outlets — wiped",
+      ]},
+      {name:"Kitchen",items:[
+        "Countertops — sanitized, no crumbs or residue",
+        "Sink — scrubbed, no food debris, drain clear",
+        "Stovetop — degreased, no burnt residue",
+        "Oven interior — clean, no odor",
+        "Microwave inside and out — clean, no splatter",
+        "Refrigerator — previous guest items removed, shelves wiped",
+        "Dishwasher — emptied, filter clean, no odor",
+        "Cabinets and drawers — wiped exterior, contents organized",
+        "Coffee maker — cleaned, filter replaced, ready to use",
+        "Trash can — sanitized, fresh liner",
+        "Floor — mopped, no sticky spots",
+        "Supplies restocked (dish soap, sponge, paper towels)",
+      ]},
+      {name:"Bedrooms",items:[
+        "Mattress protector — clean, no stains, properly fitted",
+        "Sheets — fresh, laundered, properly tucked",
+        "Pillowcases — fresh, no hair or stains",
+        "Duvet / comforter — clean, shaken out, evenly spread",
+        "Pillows — fluffed, correctly arranged",
+        "Nightstand — wiped, items organized or cleared",
+        "Closet — hangers straightened, guest items removed",
+        "Floors — vacuumed including under bed",
+        "Mirrors — streak-free",
+        "Blinds / curtains — straightened, no dust buildup",
+      ]},
+      {name:"Bathrooms",items:[
+        "Toilet — bowl, seat, base, and behind — fully sanitized",
+        "Shower / tub — scrubbed, no soap scum or hair",
+        "Grout lines — no mold or discoloration",
+        "Sink and faucet — sanitized, no toothpaste or residue",
+        "Mirror — streak-free",
+        "Exhaust fan — dust-free",
+        "Floor — mopped, grout clean, no hair",
+        "Towels — fresh, folded to standard, properly displayed",
+        "Toiletries restocked (shampoo, soap, toilet paper — 2+ rolls)",
+        "Trash — emptied, fresh liner",
+      ]},
+      {name:"Outdoor / Patio (if applicable)",items:[
+        "Patio furniture — wiped, arranged neatly",
+        "BBQ grill — cleaned, cover replaced",
+        "Outdoor trash — emptied",
+        "Floors / deck — swept or hosed",
+      ]},
+      {name:"Final Checks",items:[
+        "All lights tested and working",
+        "AC / heat set to correct temperature for arrival",
+        "WiFi password card / welcome info visible and correct",
+        "No personal items left by previous guest",
+        "Lockbox / keypad — tested and working",
+        "Property photographed for proof of condition",
+      ]},
+    ]
+  },
+  {
+    id:"office", label:"Commercial Office", icon:"🏢", accent:"#2563eb",
+    scenario:"Post-Cleaning Inspection",
+    intro:"Office cleaning is judged by tenants the moment they arrive in the morning. This inspection catches every missed surface before the first employee walks in.",
+    categories:[
+      {name:"Building Entrance & Lobby",items:[
+        "Entry glass doors — streak-free inside and out",
+        "Entry mat — vacuumed or shaken, properly seated",
+        "Reception desk — dusted, sanitized, items reset",
+        "Lobby floors — polished, no scuffs or streaks",
+        "Elevator call buttons — disinfected",
+        "Lobby seating — wiped, cushions straightened",
+      ]},
+      {name:"Elevators",items:[
+        "Cab walls — no marks, wiped clean",
+        "Floor — vacuumed or mopped",
+        "Button panel — disinfected, no grime",
+        "Door tracks — debris-free",
+      ]},
+      {name:"Restrooms",items:[
+        "Toilets — bowl, seat, base — fully sanitized",
+        "Urinals — cleaned, deodorizer in place",
+        "Sinks and faucets — sanitized, no water stains",
+        "Mirrors — streak-free",
+        "Floors — mopped, grout clean, no standing water",
+        "Supplies stocked — soap, paper, seat covers",
+        "Trash — emptied, fresh liner",
+        "Cleaning log — updated with today's date and time",
+      ]},
+      {name:"Office Floor & Workspaces",items:[
+        "Carpet — fully vacuumed including edges and under desks",
+        "Hard floor — dust-mopped and damp-mopped",
+        "Desks — dusted and wiped (where permitted)",
+        "Trash — emptied at every station, fresh liners",
+        "Recycling — emptied and sorted",
+        "Window sills and ledges — dusted",
+      ]},
+      {name:"Conference Rooms",items:[
+        "Table — wiped and sanitized",
+        "Chairs — wiped, pushed in evenly",
+        "Whiteboard — erased, tray cleaned",
+        "AV equipment — dusted, cables managed",
+        "Floor — vacuumed or mopped",
+        "Trash — emptied, fresh liner",
+      ]},
+      {name:"Break Room / Kitchen",items:[
+        "Sink — scrubbed, no food residue",
+        "Countertops — sanitized",
+        "Microwave — inside and out clean",
+        "Refrigerator exterior — wiped",
+        "Coffee station — drip tray clean, surfaces wiped",
+        "Floor — mopped including under appliances",
+        "Trash — emptied, fresh liner",
+      ]},
+    ]
+  },
+  {
+    id:"bank", label:"Banks & Credit Unions", icon:"🏦", accent:"#b8860b",
+    scenario:"Post-Cleaning Inspection",
+    intro:"Bank cleaning is verified against regulatory and brand standards. This inspection confirms every customer-facing and compliance-sensitive area meets the required standard before opening.",
+    categories:[
+      {name:"Customer-Facing Areas",items:[
+        "Lobby floors — polished, no streaks or residue",
+        "Entry glass — fingerprint-free, streak-free",
+        "Teller counters — sanitized, no film or residue",
+        "Queue barriers — wiped clean",
+        "ATM surround — clean, no grime at edges",
+        "Waiting area seating — wiped and sanitized",
+        "Brochure racks — dusted, materials straightened",
+      ]},
+      {name:"Restrooms",items:[
+        "Toilets and urinals — fully sanitized",
+        "Sinks and faucet handles — sanitized, no water marks",
+        "Floors — clean grout, no pooling",
+        "Soap and paper dispensers — fully restocked",
+        "Mirrors — streak-free",
+        "Trash — emptied, fresh liner",
+        "Odor control — active and effective",
+      ]},
+      {name:"Private & Compliance Zones",items:[
+        "Loan office desks — wiped, no paper debris",
+        "Conference rooms — surfaces clean, chairs reset",
+        "Vault ante-room — no dust on floors or shelves",
+        "Safe deposit area — spotless",
+        "Shredder area — debris cleared",
+      ]},
+      {name:"Break Room & Staff Areas",items:[
+        "Microwave — interior clean",
+        "Refrigerator exterior — wiped",
+        "Coffee station — no grounds or drips",
+        "Sink — clean, no residue",
+        "Floor — mopped including under furniture",
+      ]},
+      {name:"Exterior & Threshold",items:[
+        "Entry mat — clean and secure",
+        "Exterior signage — no cobwebs or dust",
+        "Drive-thru lane — ledge wiped, tube clean",
+      ]},
+    ]
+  },
+  {
+    id:"dealer", label:"Car Dealerships", icon:"🚗", accent:"#c0392b",
+    scenario:"Post-Cleaning Inspection",
+    intro:"Dealership cleaning is judged the moment a customer steps on the lot. OEM brand standards are specific — this inspection confirms the showroom is ready for the day.",
+    categories:[
+      {name:"Showroom Floor",items:[
+        "Floors — polished, no tire marks or scuffs",
+        "Display vehicle surfaces — fingerprint and dust-free",
+        "Window glass — streak-free from all angles",
+        "Display pedestals and signage — dusted",
+        "Ceiling vents — no dust fallout visible",
+      ]},
+      {name:"Customer Lounge",items:[
+        "Seating — stain-free, sanitized, cushions reset",
+        "Coffee station — clean, stocked, tray wiped",
+        "TV screen and mount — dust-free",
+        "Children's area — sanitized, toys organized",
+        "Floors under seating — vacuumed or mopped",
+      ]},
+      {name:"Service Drive & Write-Up",items:[
+        "Write-up desks — wiped and organized",
+        "Service drive floor — degreased, no pooling",
+        "Advisor computers — dust-free",
+        "Customer staging area — swept and marked",
+      ]},
+      {name:"Service Bays",items:[
+        "Bay floors — degreased, no fluid buildup",
+        "Drain covers — clear",
+        "Tool stations — wiped and organized",
+        "Bay windows — clean for safety visibility",
+      ]},
+      {name:"Restrooms",items:[
+        "Customer restroom — showroom-level standard",
+        "Staff restroom — clean and odor-free",
+        "Floors — clean grout, no standing water",
+        "Supplies stocked — soap, paper, air freshener",
+      ]},
+      {name:"Parts Counter",items:[
+        "Counter top — clean, no grease",
+        "Retail display — dusted and faced",
+        "Floor behind counter — swept",
+      ]},
+    ]
+  },
+  {
+    id:"residential", label:"Residential High-End", icon:"🏡", accent:"#6d4c9e",
+    scenario:"Post-Cleaning Inspection",
+    intro:"High-end residential clients have zero tolerance for missed details. This inspection is room-by-room, surface-by-surface — everything must be white-glove ready before you leave.",
+    categories:[
+      {name:"Entry & Common Areas",items:[
+        "Front door and hardware — polished, no fingerprints",
+        "Foyer floor — swept/mopped, no debris",
+        "Hallways — vacuumed or mopped, baseboards wiped",
+        "Light switches and outlet plates — wiped",
+        "Mirrors and art glass — streak-free",
+      ]},
+      {name:"Living & Dining Rooms",items:[
+        "All surfaces dusted including shelves, legs, undersides",
+        "Upholstery — vacuumed, cushions fluffed and reset",
+        "Floors — vacuumed or mopped edge-to-edge",
+        "Dining table and chairs — wiped and reset",
+        "Windows and sills — wiped, streak-free",
+        "Fireplace surround — dusted and wiped",
+      ]},
+      {name:"Kitchen",items:[
+        "Countertops — sanitized, no crumbs or residue",
+        "Cabinet fronts — wiped, no fingerprints",
+        "Appliance exteriors — polished and smudge-free",
+        "Sink — scrubbed, faucet polished",
+        "Stovetop and hood — degreased",
+        "Inside microwave — clean, no odor",
+        "Floor — mopped including under appliances",
+        "Trash — emptied, fresh liner",
+      ]},
+      {name:"Bedrooms",items:[
+        "Beds made to hotel standard",
+        "All surfaces dusted",
+        "Floors vacuumed including under bed and furniture",
+        "Closet — tidy, no cleaning supplies left behind",
+        "Mirrors — streak-free",
+      ]},
+      {name:"Bathrooms",items:[
+        "Toilet — bowl, seat, base, behind — fully sanitized",
+        "Shower / tub — scrubbed, no soap scum or water spots",
+        "Glass shower door / enclosure — streak-free",
+        "Faucets and fixtures — polished",
+        "Sink — sanitized, no residue",
+        "Mirror — streak-free",
+        "Floor — mopped, no hair",
+        "Towels — folded or hung to standard",
+        "Trash — emptied, fresh liner",
+      ]},
+      {name:"Final Walkthrough",items:[
+        "No cleaning products, cloths, or equipment left behind",
+        "All doors and windows in original position",
+        "Lights set as found or as instructed",
+        "Client's items not moved or disturbed",
+        "Property secured on exit",
+      ]},
+    ]
+  },
+  {
+    id:"hoa", label:"HOA / Condo Complex", icon:"🏘️", accent:"#2e8b57",
+    scenario:"Post-Cleaning Inspection",
+    intro:"HOA common areas are photographed and discussed at board meetings. This inspection documents what was done and confirms every resident-visible area is complete before the crew leaves.",
+    categories:[
+      {name:"Lobby & Entrance",items:[
+        "Entry doors and glass — fingerprint-free, streak-free",
+        "Lobby floors — swept, mopped, no debris",
+        "Entry mat — clean and flat",
+        "Mailroom — floors swept, no debris",
+        "Package area — swept, no cardboard buildup",
+        "Intercom panel — wiped clean",
+      ]},
+      {name:"Elevators & Stairwells",items:[
+        "Elevator cab walls — no marks or scuffs",
+        "Elevator floor — mopped or vacuumed",
+        "Button panel — disinfected",
+        "Door tracks — clear of debris",
+        "Stairwells — swept every floor, no cobwebs",
+        "Handrails — wiped and disinfected",
+        "Stairwell landings — mopped",
+      ]},
+      {name:"Hallways",items:[
+        "Corridor floors — vacuumed or mopped edge-to-edge",
+        "Walls — no scuffs or marks left unaddressed",
+        "Light fixtures — dusted",
+        "HVAC vents — no dust fallout on walls below",
+      ]},
+      {name:"Pool & Deck",items:[
+        "Pool deck — swept, no debris",
+        "Pool furniture — wiped and arranged",
+        "Pool restrooms — sanitized and stocked",
+        "Pool shower — no mold, drain clear",
+        "Trash receptacles — emptied, liners replaced",
+      ]},
+      {name:"Fitness Center",items:[
+        "Equipment surfaces — disinfected",
+        "Wipe dispenser — stocked",
+        "Mirrors — streak-free",
+        "Floors — mopped",
+        "Trash — emptied",
+      ]},
+      {name:"Clubhouse / Community Room",items:[
+        "Tables and chairs — wiped and reset",
+        "Kitchen — sink, counters, appliances clean",
+        "Floors — swept and mopped",
+        "Restrooms — sanitized and stocked",
+        "Trash — emptied, liner replaced",
+      ]},
+      {name:"Parking Garage & Exterior",items:[
+        "Garage floors — swept, drains clear",
+        "Garage stairwells — swept",
+        "Dumpster enclosure — swept, doors close fully",
+        "Building entry points — no cobwebs or leaf buildup",
+      ]},
+    ]
+  },
+  {
+    id:"postconstruction", label:"Post-Construction", icon:"🏗️", accent:"#d97706",
+    scenario:"Construction Clean Inspection",
+    intro:"Construction cleans are stage-specific and high-stakes. Builders and GCs sign off before the next trade enters. This inspection documents completion of each phase precisely.",
+    categories:[
+      {name:"Rough Clean — After Framing & Drywall",items:[
+        "Large debris and waste — removed from all rooms",
+        "Drywall dust — vacuumed and wiped from all surfaces",
+        "Wood off-cuts and scrap — cleared",
+        "Window rough openings — debris cleared",
+        "Subfloors — swept, no nail plates or sharp debris",
+        "Stairwells — debris removed, safe to walk",
+        "Exterior entry points — debris removed",
+        "Dumpster / waste area — properly loaded, no overflow",
+      ]},
+      {name:"Pre-Drywall Clean",items:[
+        "Framing cavities — vacuumed of sawdust and debris",
+        "Window and door frames — wiped, no debris",
+        "Mechanical rough-ins (HVAC, plumbing) — areas cleared",
+        "Subfloor — clean, no foreign material before insulation",
+        "All penetrations — checked, no debris blocking",
+      ]},
+      {name:"Final Construction Clean",items:[
+        "All construction debris removed from every room",
+        "Windows — cleaned inside and out, no paint overspray",
+        "Window tracks and sills — vacuumed and wiped",
+        "Doors and door frames — wiped, no paint drips",
+        "Baseboards — wiped, no drywall compound residue",
+        "Cabinets — inside and out, no sawdust or residue",
+        "Countertops — protective film removed if applicable, cleaned",
+        "All flooring — vacuumed and mopped",
+        "Tile — grouted surfaces cleaned, no haze",
+        "Bathroom fixtures — cleaned and protected",
+        "Kitchen appliances — inside and out",
+        "Light fixtures — globes cleaned, bulbs checked",
+        "HVAC vents and returns — vacuumed",
+        "Garage — swept, no construction material remaining",
+        "Exterior — entry swept, no debris at threshold",
+      ]},
+      {name:"Post-Punch List Clean (Move-In Ready)",items:[
+        "Touch-up paint areas — cleaned around, no smears",
+        "All surfaces — white-glove dust-free",
+        "Floors — final polish or buff",
+        "Bathrooms — fixture polish, mirrors streak-free",
+        "Kitchen — all appliances spotless, ready for use",
+        "All windows — final inspection, no smudges",
+        "No cleaning materials or equipment left on site",
+        "All rooms photographed as proof of condition",
+      ]},
+    ]
+  },
+];
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+const STORAGE_KEY = "sentinelclean_v2";
+let state = {
+  tab: "airbnb",
+  scores: {},   // key: "industryId|catIdx|itemIdx" => "done"|"redo"|"skip"
+  notes: {},
+  photos: {},   // stored as dataURL strings
+  catPhotos: {}, // category-level photos: {catPhotoKey: [dataURL, ...]}
+  client:"", loc:"", inspector:"", company:"",
+  date: new Date().toISOString().split("T")[0],
+  time: new Date().toTimeString().slice(0,5),
+  sigData: null,
+  openCats: {},  // catKey => bool (false = collapsed)
+  openNotes: {}, // itemKey => bool
+};
+let inspections = [];
+let sigDrawing = false;
+let sigCtx = null;
+
+function itemKey(indId, catIdx, itemIdx){ return indId+"|"+catIdx+"|"+itemIdx; }
+
+// ══════════════════════════════════════════════════════
+// PERSISTENCE
+// ══════════════════════════════════════════════════════
+function persist(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({state, inspections})); }catch(e){}
+}
+function loadPersisted(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data.state){
+      // merge carefully so new fields survive
+      Object.assign(state, data.state);
+    }
+    if(data.inspections) inspections = data.inspections;
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function getInd(){ return INDUSTRIES.find(i=>i.id===state.tab); }
+
+function calcStats(){
+  const ind = getInd();
+  let total=0,done=0,redo=0,skip=0,redoItems=[];
+  ind.categories.forEach((cat,ci)=>{
+    cat.items.forEach((lbl,ii)=>{
+      const k=itemKey(state.tab,ci,ii);
+      const s=state.scores[k];
+      if(s){ total++;
+        if(s==="done") done++;
+        else if(s==="redo"){ redo++; redoItems.push(lbl); }
+        else if(s==="skip") skip++;
+      }
+    });
+  });
+  const effective = total - skip;
+  const pct = effective>0 ? Math.round(done/effective*100) : null;
+  const complete = pct===100 && redo===0 && effective>0;
+  return {total,done,redo,skip,redoItems,pct,complete};
+}
+
+function scoreColor(pct,complete){
+  if(pct===null) return "#374151";
+  if(complete||pct>=100) return "#166534";
+  if(pct>=80) return "#166534";
+  if(pct>=60) return "#92400e";
+  return "#991b1b";
+}
+function scoreBg(pct,complete){
+  if(pct===null) return "#f9fafb";
+  if(complete||pct>=100) return "#dcfce7";
+  if(pct>=80) return "#dcfce7";
+  if(pct>=60) return "#fef3c7";
+  return "#fee2e2";
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER TABS
+// ══════════════════════════════════════════════════════
+function renderTabs(){
+  const wrap = document.getElementById("tabs");
+  wrap.innerHTML = INDUSTRIES.map(ind=>{
+    const active = state.tab===ind.id;
+    return `<button class="tab-btn${active?" active":""}" data-id="${ind.id}"
+      style="${active?"background:"+ind.accent:""}">
+      ${ind.icon} ${ind.label}
+    </button>`;
+  }).join("");
+  wrap.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{ state.tab=btn.dataset.id; persist(); renderAll(); });
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER BANNER
+// ══════════════════════════════════════════════════════
+function renderBanner(){
+  const ind = getInd();
+  const banner = document.getElementById("scenario-banner");
+  banner.style.borderLeftColor = ind.accent;
+  document.getElementById("scenario-eyebrow").style.color = ind.accent;
+  document.getElementById("scenario-eyebrow").textContent = ind.icon+" "+ind.label+" — "+ind.scenario;
+  document.getElementById("scenario-text").textContent = ind.intro;
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER CATEGORIES
+// ══════════════════════════════════════════════════════
+function renderCategories(){
+  const ind = getInd();
+  const wrap = document.getElementById("categories");
+  wrap.innerHTML = "";
+
+  ind.categories.forEach((cat,ci)=>{
+    const catKey = state.tab+"|"+ci;
+    const isOpen = state.openCats[catKey] !== false; // default open
+
+    // count
+    let catDone=0,catRedo=0;
+    cat.items.forEach((_,ii)=>{
+      const s=state.scores[itemKey(state.tab,ci,ii)];
+      if(s==="done") catDone++;
+      if(s==="redo") catRedo++;
+    });
+
+    const block = document.createElement("div");
+    block.className="cat-block";
+    block.innerHTML=`
+      <div class="cat-head${isOpen?" open":""}" data-catkey="${catKey}">
+        <div class="cat-left">
+          <div class="cat-bar"></div>
+          <span class="cat-name">${cat.name}</span>
+          <span class="cat-count">${cat.items.length} items</span>
+        </div>
+        <div class="cat-pills">
+          ${catRedo>0?`<span class="cat-pill redo">${catRedo} REDO</span>`:""}
+          ${catDone>0?`<span class="cat-pill done">${catDone} DONE</span>`:""}
+          <span class="cat-chevron">▼</span>
+        </div>
+      </div>
+      <div class="cat-items" style="${isOpen?"":"display:none"}"></div>
+    `;
+
+    const head = block.querySelector(".cat-head");
+    const itemsWrap = block.querySelector(".cat-items");
+
+    head.addEventListener("click",()=>{
+      state.openCats[catKey] = !isOpen;
+      persist();
+      renderCategories();
+    });
+
+    // render items
+    cat.items.forEach((lbl,ii)=>{
+      const ik = itemKey(state.tab,ci,ii);
+      const sc = state.scores[ik] || null;
+      const noteOpen = state.openNotes[ik] || false;
+      const hasNote = !!(state.notes[ik]&&state.notes[ik].trim());
+      const hasPhoto = !!(state.photos[ik]);
+
+      const rowDiv = document.createElement("div");
+      rowDiv.className="item-row"+(sc===" done"?" done-row":sc==="redo"?" redo-row":"");
+      if(sc==="done") rowDiv.className="item-row done-row";
+      else if(sc==="redo") rowDiv.className="item-row redo-row";
+
+      rowDiv.innerHTML=`
+        <div class="item-main">
+          <div class="item-bar${sc?" scored-"+sc:""}"></div>
+          <div class="item-label">${lbl}${(hasNote||hasPhoto)?`<span class="item-icons">${hasPhoto?"📷":""} ${hasNote?"📝":""}</span>`:""}
+          </div>
+          <div class="item-btns">
+            <button class="score-btn${sc==="done"?" active-done":""}" data-val="done">✓ Done</button>
+            <button class="score-btn${sc==="redo"?" active-redo":""}" data-val="redo">↺ Redo</button>
+            <button class="score-btn${sc==="skip"?" active-skip":""}" data-val="skip">— Skip</button>
+            <button class="note-toggle no-print${noteOpen?" open":""}" title="Note/Photo">${noteOpen?"▲":"＋"}</button>
+          </div>
+        </div>
+        <div class="note-panel" style="${noteOpen?"":"display:none"}">
+          <textarea class="note-textarea" placeholder="Add a note about this item...">${state.notes[ik]||""}</textarea>
+          <div class="photo-row">
+            <button class="btn-photo">${hasPhoto?"📷 Replace Photo":"📷 Add Photo"}</button>
+            ${hasPhoto?`<img class="photo-thumb" src="${state.photos[ik]}" alt="proof"/><button class="btn-rm-photo">Remove</button>`:""}
+          </div>
+        </div>
+      `;
+
+      // score buttons
+      rowDiv.querySelectorAll(".score-btn").forEach(btn=>{
+        btn.addEventListener("click",()=>{
+          const v=btn.dataset.val;
+          if(state.scores[ik]===v) delete state.scores[ik];
+          else state.scores[ik]=v;
+          persist();
+          renderCategories();
+          renderScoreBadge();
+          renderSummary();
+        });
+      });
+
+      // note toggle
+      rowDiv.querySelector(".note-toggle").addEventListener("click",()=>{
+        state.openNotes[ik]=!noteOpen;
+        persist();
+        renderCategories();
+      });
+
+      // textarea
+      const ta = rowDiv.querySelector(".note-textarea");
+      if(ta){
+        ta.addEventListener("input",()=>{
+          state.notes[ik]=ta.value;
+          persist();
+        });
+      }
+
+      // photo
+      const btnPhoto = rowDiv.querySelector(".btn-photo");
+      if(btnPhoto){
+        btnPhoto.addEventListener("click",()=>{
+          const inp=document.createElement("input");
+          inp.type="file"; inp.accept="image/*"; inp.capture="environment";
+          inp.onchange=()=>{
+            const file=inp.files[0]; if(!file)return;
+            const reader=new FileReader();
+            reader.onload=e=>{ state.photos[ik]=e.target.result; persist(); renderCategories(); };
+            reader.readAsDataURL(file);
+          };
+          inp.click();
+        });
+      }
+
+      // remove photo
+      const btnRm = rowDiv.querySelector(".btn-rm-photo");
+      if(btnRm){
+        btnRm.addEventListener("click",()=>{ delete state.photos[ik]; persist(); renderCategories(); });
+      }
+
+      itemsWrap.appendChild(rowDiv);
+    });
+
+    // ── Category-level photo section ──
+    const catPhotoKey = "catphoto|" + state.tab + "|" + ci;
+    const catPhotos = state.catPhotos && state.catPhotos[catPhotoKey] ? state.catPhotos[catPhotoKey] : [];
+
+    const photoSection = document.createElement("div");
+    photoSection.className = "cat-photo-section no-print";
+    let thumbsHtml = catPhotos.map((src, pi) => `
+      <div class="cat-photo-thumb-wrap" data-pi="${pi}">
+        <img class="cat-photo-thumb" src="${src}" alt="photo ${pi+1}" title="Click to enlarge"/>
+        <button class="btn-rm-cat-photo" data-pi="${pi}">×</button>
+      </div>`).join("");
+    photoSection.innerHTML = `
+      <div class="cat-photo-label">📷 Category Photos (${catPhotos.length})</div>
+      <div class="cat-photo-row">
+        <button class="btn-cat-photo">+ Add Photo</button>
+        ${thumbsHtml}
+      </div>`;
+
+    // add photo
+    photoSection.querySelector(".btn-cat-photo").addEventListener("click", () => {
+      const inp = document.createElement("input");
+      inp.type = "file"; inp.accept = "image/*"; inp.capture = "environment"; inp.multiple = true;
+      inp.onchange = () => {
+        const files = Array.from(inp.files);
+        let remaining = files.length;
+        files.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            if(!state.catPhotos) state.catPhotos = {};
+            if(!state.catPhotos[catPhotoKey]) state.catPhotos[catPhotoKey] = [];
+            state.catPhotos[catPhotoKey].push(e.target.result);
+            remaining--;
+            if(remaining === 0){ persist(); renderCategories(); }
+          };
+          reader.readAsDataURL(file);
+        });
+      };
+      inp.click();
+    });
+
+    // remove photo
+    photoSection.querySelectorAll(".btn-rm-cat-photo").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.stopPropagation();
+        const pi = parseInt(btn.dataset.pi);
+        state.catPhotos[catPhotoKey].splice(pi, 1);
+        persist(); renderCategories();
+      });
+    });
+
+    // enlarge on click
+    photoSection.querySelectorAll(".cat-photo-thumb").forEach((img, pi) => {
+      img.addEventListener("click", () => {
+        const ov = document.createElement("div");
+        ov.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:999;display:flex;align-items:center;justify-content:center;cursor:zoom-out";
+        const big = document.createElement("img");
+        big.src = catPhotos[pi];
+        big.style.cssText = "max-width:92vw;max-height:88vh;border-radius:8px;box-shadow:0 4px 30px rgba(0,0,0,.5)";
+        ov.appendChild(big);
+        ov.onclick = () => ov.remove();
+        document.body.appendChild(ov);
+      });
+    });
+
+    if(isOpen) block.appendChild(photoSection);
+
+    wrap.appendChild(block);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// SCORE BADGE
+// ══════════════════════════════════════════════════════
+function renderScoreBadge(){
+  const {pct,complete} = calcStats();
+  const wrap = document.getElementById("score-badge-wrap");
+  const badge = document.getElementById("score-badge");
+  if(pct===null){ wrap.style.display="none"; return; }
+  wrap.style.display="block";
+  const col=scoreColor(pct,complete), bg=scoreBg(pct,complete);
+  badge.style.background=bg;
+  badge.style.border="1px solid "+col+"44";
+  document.getElementById("score-pct").textContent=pct+"%";
+  document.getElementById("score-pct").style.color=col;
+  document.getElementById("score-lbl").textContent=complete?"COMPLETE":"PROGRESS";
+  document.getElementById("score-lbl").style.color=col;
+
+  // action counts
+  const {done,redo,skip} = calcStats();
+  const countsEl = document.getElementById("action-counts");
+  if(pct!==null){
+    countsEl.style.display="flex";
+    document.getElementById("cnt-done").textContent="✓ "+done;
+    document.getElementById("cnt-redo").textContent="↺ "+redo;
+    document.getElementById("cnt-skip").textContent="— "+skip;
+  } else {
+    countsEl.style.display="none";
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════════════════════
+function renderSummary(){
+  const {total,done,redo,skip,redoItems,pct,complete} = calcStats();
+  const sumEl = document.getElementById("summary");
+  if(total===0){ sumEl.style.display="none"; return; }
+  sumEl.style.display="block";
+
+  const col = scoreColor(pct,complete), bg = scoreBg(pct,complete);
+  sumEl.style.border="2px solid "+col+"33";
+  sumEl.style.borderTop="3px solid "+(complete?"#22c55e":"#f59e0b");
+
+  // status
+  const statusEl = document.getElementById("summary-status");
+  statusEl.style.background=bg; statusEl.style.color=col;
+  statusEl.textContent = complete
+    ? "✓ INSPECTION COMPLETE — READY FOR CLIENT"
+    : redo>0 ? "↺ "+redo+" ITEM"+(redo!==1?"S":"")+" REQUIRE REDO BEFORE SIGN-OFF"
+    : "INSPECTION IN PROGRESS";
+
+  // stats
+  const statsEl = document.getElementById("stats-grid");
+  const stats=[
+    {l:"Inspected",v:total,  c:"#374151",bg:"#f9fafb"},
+    {l:"Done",     v:done,   c:"#166534",bg:"#dcfce7"},
+    {l:"Redo",     v:redo,   c:"#92400e",bg:"#fef3c7"},
+    {l:"Skipped",  v:skip,   c:"#6b7280",bg:"#f3f4f6"},
+    {l:"Score",    v:(pct||0)+"%", c:col, bg},
+  ];
+  statsEl.innerHTML=stats.map(s=>`
+    <div class="stat-box" style="background:${s.bg};border:1px solid ${s.c}22">
+      <div class="stat-val" style="color:${s.c}">${s.v}</div>
+      <div class="stat-lbl" style="color:${s.c}">${s.l.toUpperCase()}</div>
+    </div>`).join("");
+
+  // redo list
+  const redoWrap=document.getElementById("redo-list-wrap");
+  if(redo>0){
+    redoWrap.style.display="block";
+    document.getElementById("redo-list-items").innerHTML=
+      redoItems.map(lbl=>`<div class="redo-item"><span style="color:#f59e0b">↺</span>${lbl}</div>`).join("");
+  } else { redoWrap.style.display="none"; }
+
+  // inspector row
+  document.getElementById("inspector-row").innerHTML=
+    `<strong>Inspector:</strong> ${state.inspector||"—"} &nbsp;·&nbsp;
+     <strong>Company:</strong> ${state.company||"—"} &nbsp;·&nbsp;
+     <strong>Client:</strong> ${state.client||"—"} &nbsp;·&nbsp;
+     <strong>Location:</strong> ${state.loc||"—"} &nbsp;·&nbsp;
+     <strong>Date:</strong> ${state.date} at ${state.time}`;
+
+  document.getElementById("sentinel-copy").textContent="© "+new Date().getFullYear()+" Sarasota Cleaning. All rights reserved.";
+
+  renderSigSection();
+}
+
+// ══════════════════════════════════════════════════════
+// SIGNATURE
+// ══════════════════════════════════════════════════════
+let sigActive = false;
+
+function renderSigSection(){
+  const headBtns = document.getElementById("sig-head-btns");
+  const canvasWrap = document.getElementById("sig-canvas-wrap");
+  const imgWrap = document.getElementById("sig-image-wrap");
+  const emptyEl = document.getElementById("sig-empty");
+
+  headBtns.innerHTML="";
+  if(!sigActive){
+    const btnSign = document.createElement("button");
+    btnSign.className = state.sigData?"btn-resign":"btn-sign";
+    btnSign.textContent = state.sigData?"Re-sign":"Sign here";
+    btnSign.onclick = startSig;
+    headBtns.appendChild(btnSign);
+    if(state.sigData){
+      const btnClr = document.createElement("button");
+      btnClr.className="btn-clrsig";
+      btnClr.textContent="Clear";
+      btnClr.onclick=()=>{ state.sigData=null; persist(); renderSigSection(); };
+      headBtns.appendChild(btnClr);
+    }
+  }
+
+  canvasWrap.style.display = sigActive?"block":"none";
+  imgWrap.style.display = (state.sigData&&!sigActive)?"block":"none";
+  emptyEl.style.display = (!state.sigData&&!sigActive)?"block":"none";
+
+  if(state.sigData&&!sigActive){
+    document.getElementById("sig-img").src=state.sigData;
+    document.getElementById("sig-by").textContent=(state.inspector||"Inspector")+" — "+state.date+" "+state.time;
+  }
+}
+
+function startSig(){
+  sigActive=true;
+  renderSigSection();
+  const canvas=document.getElementById("sig-canvas");
+  canvas.width=canvas.offsetWidth||600;
+  canvas.height=120;
+  sigCtx=canvas.getContext("2d");
+  sigCtx.strokeStyle="#1a1a1a"; sigCtx.lineWidth=2; sigCtx.lineCap="round";
+  sigCtx.clearRect(0,0,canvas.width,canvas.height);
+
+  function getXY(e){
+    const r=canvas.getBoundingClientRect();
+    const src=e.touches?e.touches[0]:e;
+    return [src.clientX-r.left, src.clientY-r.top];
+  }
+  canvas.onmousedown=canvas.ontouchstart=e=>{ sigDrawing=true; const[x,y]=getXY(e); sigCtx.beginPath(); sigCtx.moveTo(x,y); e.preventDefault(); };
+  canvas.onmousemove=canvas.ontouchmove=e=>{ if(!sigDrawing)return; const[x,y]=getXY(e); sigCtx.lineTo(x,y); sigCtx.stroke(); e.preventDefault(); };
+  canvas.onmouseup=canvas.ontouchend=canvas.onmouseleave=()=>{ sigDrawing=false; };
+}
+function clearSigCanvas(){ if(sigCtx){ const c=document.getElementById("sig-canvas"); sigCtx.clearRect(0,0,c.width,c.height); }}
+function confirmSig(){
+  const canvas=document.getElementById("sig-canvas");
+  state.sigData=canvas.toDataURL();
+  sigActive=false; persist(); renderSigSection();
+}
+function cancelSig(){ sigActive=false; renderSigSection(); }
+
+// ══════════════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════════════
+function renderHistory(){
+  const panel=document.getElementById("history-panel");
+  const list=document.getElementById("history-list");
+  if(inspections.length===0){
+    list.innerHTML='<div class="history-empty">No saved inspections yet.</div>'; return;
+  }
+  const grid=document.createElement("div"); grid.className="history-grid";
+  inspections.forEach((rec,idx)=>{
+    const card=document.createElement("div"); card.className="hist-card";
+    card.innerHTML=`
+      <div class="hist-top">
+        <div>
+          <div class="hist-client">${rec.industryIcon||""} ${rec.client||"Unnamed"}</div>
+          <div class="hist-sub">${rec.loc||"No location"} · ${rec.date||""}</div>
+          <div class="hist-sub" style="color:#4ade8066">${rec.industry||""}</div>
+        </div>
+        ${rec.pct!==null?`<div class="hist-pct">${rec.pct}%</div>`:""}
+      </div>
+      <div class="hist-btns">
+        <button class="btn-load-hist">Load</button>
+        <button class="btn-del-hist">Delete</button>
+      </div>`;
+    card.querySelector(".btn-load-hist").addEventListener("click",()=>loadRecord(rec));
+    card.querySelector(".btn-del-hist").addEventListener("click",()=>{
+      inspections.splice(idx,1); persist(); renderHistory();
+      const btn=document.getElementById("btn-history");
+      btn.textContent="📋 History"+(inspections.length>0?" ("+inspections.length+")":"");
+    });
+    grid.appendChild(card);
+  });
+  list.innerHTML=""; list.appendChild(grid);
+}
+
+function loadRecord(rec){
+  state.tab = INDUSTRIES.find(i=>i.label===rec.industry)?.id||"airbnb";
+  state.client=rec.client||""; state.loc=rec.loc||"";
+  state.inspector=rec.inspector||""; state.company=rec.company||"";
+  state.date=rec.date||""; state.time=rec.time||"";
+  state.scores={...rec.scores}; state.sigData=rec.sigData||null;
+  state.notes={}; state.photos={}; state.openCats={}; state.openNotes={};
+  document.getElementById("history-panel").style.display="none";
+  document.getElementById("btn-history").classList.remove("active");
+  syncFields(); persist(); renderAll();
+}
+
+// ══════════════════════════════════════════════════════
+// SAVE / RESET
+// ══════════════════════════════════════════════════════
+function handleSave(){
+  const ind=getInd(); const {pct,done,redo,skip,total}=calcStats();
+  const rec={
+    id:Date.now(), savedAt:new Date().toLocaleString(),
+    industry:ind.label, industryIcon:ind.icon,
+    client:state.client, loc:state.loc, inspector:state.inspector,
+    company:state.company, date:state.date, time:state.time,
+    scores:{...state.scores}, pct, done, redo, skip, total,
+    sigData:state.sigData,
+  };
+  inspections=[rec,...inspections].slice(0,50);
+  persist();
+  flashBtn("btn-save","✓ Saved!","💾 Save");
+  flashBtn("btn-save2","✓ Saved!","💾 Save");
+  const histBtn=document.getElementById("btn-history");
+  histBtn.textContent="📋 History ("+inspections.length+")";
+}
+
+function flashBtn(id, on, off){
+  const btn=document.getElementById(id); if(!btn)return;
+  btn.textContent=on; btn.classList.add("flash");
+  setTimeout(()=>{ btn.textContent=off; btn.classList.remove("flash"); },2200);
+}
+
+function doReset(){
+  state.scores={}; state.notes={}; state.photos={};
+  state.client=""; state.loc=""; state.inspector=""; state.company="";
+  state.date=new Date().toISOString().split("T")[0];
+  state.time=new Date().toTimeString().slice(0,5);
+  state.openCats={}; state.openNotes={}; state.sigData=null;
+  document.getElementById("reset-confirm").style.display="none";
+  syncFields(); persist(); renderAll();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function saveFirst(){ handleSave(); doReset(); }
+
+// ══════════════════════════════════════════════════════
+// EMAIL HTML
+// ══════════════════════════════════════════════════════
+function buildEmailHtml(){
+  const ind=getInd();
+  const {total,done,redo,skip,redoItems,pct,complete}=calcStats();
+  const col=scoreColor(pct,complete), bg=scoreBg(pct,complete);
+  const statusText=complete
+    ?"✓ INSPECTION PASSED"
+    :"↺ "+redo+" ITEM"+(redo!==1?"S":"")+" REQUIRE REDO";
+
+  let catRows="";
+  ind.categories.forEach((cat,ci)=>{
+    const ci_items=cat.items.filter((_,ii)=>state.scores[itemKey(state.tab,ci,ii)]);
+    if(!ci_items.length)return;
+    catRows+=`<tr><td colspan="2" style="background:#f0fdf4;padding:9px 14px;font-weight:700;font-size:12px;color:#166534;border-top:2px solid #dcfce7;font-family:Georgia,serif;">${cat.name}</td></tr>`;
+    cat.items.forEach((lbl,ii)=>{
+      const s=state.scores[itemKey(state.tab,ci,ii)]; if(!s)return;
+      const sc={done:{color:"#166534",bg:"#dcfce7",border:"#86efac",label:"✓ Done"},redo:{color:"#92400e",bg:"#fef3c7",border:"#fde68a",label:"↺ Redo"},skip:{color:"#6b7280",bg:"#f3f4f6",border:"#d1d5db",label:"— Skip"}}[s];
+      const note=state.notes[itemKey(state.tab,ci,ii)]||"";
+      catRows+=`<tr style="border-bottom:1px solid #f3f4f6;">
+        <td style="padding:8px 14px;font-size:12px;color:#374151;font-family:Georgia,serif;">${lbl}${note?`<br/><span style="font-size:11px;color:#6b7280;font-style:italic;">Note: ${note}</span>`:""}
+        </td>
+        <td style="padding:8px 14px;text-align:right;"><span style="background:${sc.bg};color:${sc.color};border:1px solid ${sc.border};padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;font-family:monospace;">${sc.label}</span></td>
+      </tr>`;
+    });
+  });
+
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f0fdf4;font-family:Georgia,serif;">
+<div style="max-width:680px;margin:0 auto;background:#fff;border:1px solid #dcfce7;border-radius:8px;overflow:hidden;">
+  <div style="background:#fff;border-bottom:3px solid #22c55e;padding:20px 24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:10px;letter-spacing:.2em;color:#9ca3af;text-transform:uppercase;font-family:monospace;">Post-Cleaning Inspection Report</div>
+        <div style="font-size:20px;font-weight:700;color:#111827;margin-top:2px;">SentinelClean™</div>
+        <div style="font-size:12px;color:#22c55e;font-family:monospace;margin-top:2px;">${ind.icon} ${ind.label} — ${ind.scenario}</div>
+      </div>
+      <div style="text-align:center;background:${bg};border:1px solid ${col}44;border-radius:8px;padding:10px 16px;">
+        <div style="font-size:11px;font-weight:700;color:${col};font-family:monospace;">${statusText}</div>
+        ${pct!==null?`<div style="font-size:28px;font-weight:800;color:${col};line-height:1.2;">${pct}%</div>`:""}
+      </div>
+    </div>
+  </div>
+  <div style="padding:14px 24px;background:#f9fafb;border-bottom:1px solid #e5e7eb;">
+    <table style="width:100%;font-size:12px;border-collapse:collapse;">
+      <tr>
+        <td style="padding:3px 12px 3px 0;color:#6b7280;font-family:monospace;width:100px;">CLIENT</td>
+        <td style="color:#111827;font-weight:600;">${state.client||"—"}</td>
+        <td style="padding:3px 12px 3px 20px;color:#6b7280;font-family:monospace;width:100px;">LOCATION</td>
+        <td style="color:#111827;font-weight:600;">${state.loc||"—"}</td>
+      </tr>
+      <tr>
+        <td style="padding:3px 0;color:#6b7280;font-family:monospace;">INSPECTOR</td>
+        <td style="color:#111827;font-weight:600;">${state.inspector||"—"}</td>
+        <td style="padding:3px 0 3px 20px;color:#6b7280;font-family:monospace;">COMPANY</td>
+        <td style="color:#111827;font-weight:600;">${state.company||"—"}</td>
+      </tr>
+      <tr>
+        <td style="padding:3px 0;color:#6b7280;font-family:monospace;">DATE</td>
+        <td style="color:#111827;font-weight:600;" colspan="3">${state.date} at ${state.time}</td>
+      </tr>
+    </table>
+  </div>
+  <div style="padding:14px 24px;border-bottom:1px solid #e5e7eb;">
+    <table style="width:100%;text-align:center;border-collapse:collapse;">
+      <tr>
+        ${[{l:"Inspected",v:total,c:"#374151",bg:"#f9fafb"},{l:"Done",v:done,c:"#166534",bg:"#dcfce7"},{l:"Redo",v:redo,c:"#92400e",bg:"#fef3c7"},{l:"Skipped",v:skip,c:"#6b7280",bg:"#f3f4f6"},{l:"Score",v:(pct||0)+"%",c:col,bg}]
+          .map(({l,v,c,bg})=>`<td style="padding:0 4px;"><div style="background:${bg};border-radius:6px;padding:10px 4px;"><div style="font-size:20px;font-weight:800;color:${c};">${v}</div><div style="font-size:9px;color:${c};font-family:monospace;opacity:.8;margin-top:3px;">${l.toUpperCase()}</div></div></td>`).join("")}
+      </tr>
+    </table>
+  </div>
+  ${redo>0?`<div style="margin:14px 24px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:14px 16px;">
+    <div style="font-size:10px;color:#92400e;font-family:monospace;letter-spacing:.12em;margin-bottom:8px;">↺ ITEMS REQUIRING REDO</div>
+    ${redoItems.map(i=>`<div style="font-size:12px;color:#78350f;padding:4px 0;border-bottom:1px solid #fef3c7;">↺ ${i}</div>`).join("")}
+  </div>`:""}
+  <div style="padding:0 24px 18px;">
+    <table style="width:100%;border-collapse:collapse;margin-top:12px;">
+      <thead><tr style="background:#f9fafb;border-bottom:2px solid #dcfce7;">
+        <th style="padding:8px 14px;text-align:left;font-size:10px;color:#9ca3af;font-family:monospace;">ITEM</th>
+        <th style="padding:8px 14px;text-align:right;font-size:10px;color:#9ca3af;font-family:monospace;">STATUS</th>
+      </tr></thead>
+      <tbody>${catRows}</tbody>
+    </table>
+  </div>
+  ${state.sigData?`<div style="padding:14px 24px;border-top:1px solid #e5e7eb;">
+    <div style="font-size:10px;color:#9ca3af;font-family:monospace;margin-bottom:6px;">INSPECTOR SIGNATURE</div>
+    <img src="${state.sigData}" style="height:60px;border:1px solid #e5e7eb;border-radius:4px;"/>
+    <div style="font-size:11px;color:#6b7280;margin-top:4px;">${state.inspector||"Inspector"} — ${state.date} ${state.time}</div>
+  </div>`:""}
+  <div style="padding:14px 24px;background:#f0fdf4;border-top:2px solid #dcfce7;">
+    <div style="font-size:11px;color:#6b7280;font-style:italic;margin-bottom:6px;">This inspection was conducted and certified by a SentinelClean™ professional. Results reflect conditions at time of inspection.</div>
+    <div style="font-size:12px;font-weight:700;color:#166534;font-family:monospace;letter-spacing:.05em;">SentinelClean™ <span style="font-weight:400;color:#6b7280;">— Compliance-grade cleaning by Sarasota Cleaning</span></div>
+    <div style="font-size:10px;color:#9ca3af;font-family:monospace;margin-top:4px;">© ${new Date().getFullYear()} Sarasota Cleaning. All rights reserved.</div>
+  </div>
+</div></body></html>`;
+}
+
+async function doCopyEmail(){
+  const html=buildEmailHtml();
+  try{
+    await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"})})]);
+    flashEmailBtn("✓ Copied! Paste into email");
+  }catch{
+    const w=window.open("","_blank");
+    w.document.write(html); w.document.close();
+  }
+}
+function flashEmailBtn(msg){
+  ["btn-email","btn-email2"].forEach(id=>{
+    const b=document.getElementById(id); if(!b)return;
+    const orig=b.textContent; b.textContent=msg; b.classList.add("flash");
+    setTimeout(()=>{ b.textContent="✉ Copy for Email"; b.classList.remove("flash"); },2500);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// FIELD SYNC
+// ══════════════════════════════════════════════════════
+function syncFields(){
+  document.getElementById("f-client").value=state.client;
+  document.getElementById("f-loc").value=state.loc;
+  document.getElementById("f-inspector").value=state.inspector;
+  document.getElementById("f-company").value=state.company;
+  document.getElementById("f-date").value=state.date;
+  document.getElementById("f-time").value=state.time;
+}
+
+function bindFields(){
+  const map=[
+    ["f-client","client"],["f-loc","loc"],
+    ["f-inspector","inspector"],["f-company","company"],
+    ["f-date","date"],["f-time","time"],
+  ];
+  map.forEach(([id,key])=>{
+    document.getElementById(id).addEventListener("input",e=>{
+      state[key]=e.target.value; persist();
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER ALL
+// ══════════════════════════════════════════════════════
+function renderAll(){
+  renderTabs();
+  renderBanner();
+  renderCategories();
+  renderScoreBadge();
+  renderSummary();
+  syncFields();
+  // update email button accent color
+  const ind=getInd();
+  ["btn-email","btn-email2"].forEach(id=>{
+    const b=document.getElementById(id); if(b) b.style.background=ind.accent;
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// MONDAY.COM INTEGRATION
+// ══════════════════════════════════════════════════════
+const MON_STORAGE_KEY = "sentinelclean_monday_cfg";
+
+function loadMondayConfig(){
+  try{ return JSON.parse(localStorage.getItem(MON_STORAGE_KEY))||{}; }catch(e){ return {}; }
+}
+function saveMondayConfig(cfg){
+  localStorage.setItem(MON_STORAGE_KEY, JSON.stringify(cfg));
+}
+
+function openMondayModal(){
+  const cfg = loadMondayConfig();
+  document.getElementById("mon-api-token").value = cfg.token||"";
+  document.getElementById("mon-board-id").value  = cfg.boardId||"";
+  document.getElementById("mon-group-name").value = cfg.groupName||"";
+  document.getElementById("monday-status").style.display="none";
+  document.getElementById("monday-modal-overlay").classList.add("open");
+}
+function closeMondayModal(){
+  document.getElementById("monday-modal-overlay").classList.remove("open");
+}
+
+function setMonStatus(msg, type){
+  const el = document.getElementById("monday-status");
+  el.textContent = msg;
+  el.className = type; // success | error | loading
+  el.style.display = "block";
+}
+
+async function mondayQuery(token, query){
+  const resp = await fetch("https://api.monday.com/v2", {
+    method: "POST",
+    headers: {
+      "Content-Type":  "application/json",
+      "Authorization": token,
+      "API-Version":   "2024-01"
+    },
+    body: JSON.stringify({ query })
+  });
+  const json = await resp.json();
+  if(json.errors && json.errors.length){
+    throw new Error(json.errors[0].message);
+  }
+  return json.data;
+}
+
+async function getMondayGroupId(token, boardId, groupName){
+  const data = await mondayQuery(token,
+    `{ boards(ids:[${boardId}]){ groups{ id title } } }`
+  );
+  const groups = data.boards[0].groups;
+  if(!groups || groups.length === 0) throw new Error("No groups found on board.");
+  if(!groupName) return groups[0].id;
+  const match = groups.find(g => g.title.toLowerCase() === groupName.toLowerCase());
+  if(!match) throw new Error(`Group "${groupName}" not found. Available: ${groups.map(g=>g.title).join(", ")}`);
+  return match.id;
+}
+
+async function exportToMonday(){
+  const cfg = loadMondayConfig();
+  if(!cfg.token || !cfg.boardId){
+    openMondayModal();
+    setMonStatus("⚠ Please enter your API Token and Board ID first.", "error");
+    return;
+  }
+
+  // Disable buttons
+  ["btn-monday","btn-monday2"].forEach(id=>{
+    const b=document.getElementById(id); if(b){ b.disabled=true; b.textContent="Exporting…"; }
+  });
+
+  try {
+    const {total,done,redo,skip,pct,complete} = calcStats();
+    const ind = getInd();
+
+    // Build item name
+    const client  = state.client  || "Unnamed Client";
+    const loc     = state.loc     || "";
+    const dateStr = state.date    || new Date().toISOString().split("T")[0];
+    const itemName = `${client}${loc?" — "+loc:""} · ${ind.label} · ${dateStr}`;
+
+    // Get group
+    const groupId = await getMondayGroupId(cfg.token, cfg.boardId, cfg.groupName||"");
+
+    // Build column values — using text columns
+    // We create the item with a name first, then update with a long text update (note)
+    const escName = itemName.replace(/"/g,'\\"');
+
+    const mutation = `
+      mutation {
+        create_item(
+          board_id: ${cfg.boardId},
+          group_id: "${groupId}",
+          item_name: "${escName}",
+          create_labels_if_missing: true
+        ) { id }
+      }`;
+
+    const createData = await mondayQuery(cfg.token, mutation);
+    const newItemId  = createData.create_item.id;
+
+    // Build a detailed text update (acts as the inspection report in the Updates column)
+    const redoItems = ind.categories.flatMap((cat,ci)=>
+      cat.items.map((lbl,ii)=>({lbl,sc:state.scores[itemKey(state.tab,ci,ii)]}))
+    ).filter(x=>x.sc==="redo").map(x=>"• "+x.lbl);
+
+    const doneItems = ind.categories.flatMap((cat,ci)=>
+      cat.items.map((lbl,ii)=>({lbl,sc:state.scores[itemKey(state.tab,ci,ii)]}))
+    ).filter(x=>x.sc==="done").map(x=>"✓ "+x.lbl);
+
+    const updateBody = [
+      `🧹 INSPECTION REPORT — ${ind.label.toUpperCase()}`,
+      ``,
+      `Client:    ${client}`,
+      `Location:  ${loc||"—"}`,
+      `Inspector: ${state.inspector||"—"}`,
+      `Company:   ${state.company||"—"}`,
+      `Date:      ${dateStr} at ${state.time||""}`,
+      ``,
+      `SCORE: ${pct||0}%  |  Done: ${done}  |  Redo: ${redo}  |  Skipped: ${skip}  |  Total: ${total}`,
+      `Status: ${complete?"✅ COMPLETE":"⚠ "+redo+" ITEM(S) REQUIRE REDO"}`,
+      ``,
+      redo>0 ? [`ITEMS REQUIRING REDO:`, ...redoItems, ``].join("\n") : "",
+      `COMPLETED ITEMS:`,
+      ...doneItems,
+      ``,
+      `— Exported from SentinelClean™ by Sarasota Cleaning`
+    ].filter(x=>x!==undefined).join("\n");
+
+    const escapedUpdate = updateBody.replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\n/g,"\\n");
+
+    await mondayQuery(cfg.token,
+      `mutation { create_update(item_id: ${newItemId}, body: "${escapedUpdate}") { id } }`
+    );
+
+    ["btn-monday","btn-monday2"].forEach(id=>{
+      const b=document.getElementById(id);
+      if(b){ b.disabled=false; b.textContent="✓ Exported!"; b.style.background="#166534"; }
+    });
+    setTimeout(()=>{
+      ["btn-monday","btn-monday2"].forEach(id=>{
+        const b=document.getElementById(id);
+        if(b){ b.textContent="📤 Export to monday"; b.style.background=""; }
+      });
+    }, 3500);
+
+  } catch(err){
+    ["btn-monday","btn-monday2"].forEach(id=>{
+      const b=document.getElementById(id);
+      if(b){ b.disabled=false; b.textContent="📤 Export to monday"; b.style.background=""; }
+    });
+    // Show error in a friendly way
+    const msg = err.message||"Unknown error";
+    alert("monday.com export failed:\n\n"+msg+"\n\nCheck your API token and Board ID in ⚙ Settings.");
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener("DOMContentLoaded",()=>{
+  loadPersisted();
+  bindFields();
+  syncFields();
+  renderAll();
+
+  // history toggle
+  document.getElementById("btn-history").addEventListener("click",()=>{
+    const panel=document.getElementById("history-panel");
+    const btn=document.getElementById("btn-history");
+    const showing=panel.style.display!=="none";
+    panel.style.display=showing?"none":"block";
+    btn.classList.toggle("active",!showing);
+    if(!showing) renderHistory();
+    const count=inspections.length;
+    btn.textContent="📋 History"+(count>0?" ("+count+")":"");
+    if(!showing) btn.classList.add("active");
+    else btn.classList.remove("active");
+  });
+
+  document.getElementById("btn-close-hist").addEventListener("click",()=>{
+    document.getElementById("history-panel").style.display="none";
+    document.getElementById("btn-history").classList.remove("active");
+  });
+
+  document.getElementById("btn-save").addEventListener("click",handleSave);
+  document.getElementById("btn-save2").addEventListener("click",handleSave);
+  document.getElementById("btn-email").addEventListener("click",doCopyEmail);
+  document.getElementById("btn-email2").addEventListener("click",doCopyEmail);
+  document.getElementById("btn-monday").addEventListener("click",exportToMonday);
+  document.getElementById("btn-monday2").addEventListener("click",exportToMonday);
+  document.getElementById("btn-monday-settings").addEventListener("click",openMondayModal);
+  document.getElementById("btn-mon-save").addEventListener("click",()=>{
+    const token = document.getElementById("mon-api-token").value.trim();
+    const boardId = document.getElementById("mon-board-id").value.trim();
+    const groupName = document.getElementById("mon-group-name").value.trim();
+    if(!token){ setMonStatus("⚠ API Token is required.", "error"); return; }
+    if(!boardId){ setMonStatus("⚠ Board ID is required.", "error"); return; }
+    saveMondayConfig({token, boardId, groupName});
+    setMonStatus("✓ Settings saved. You can now export inspections.", "success");
+    setTimeout(closeMondayModal, 1200);
+  });
+  document.getElementById("btn-mon-cancel").addEventListener("click",closeMondayModal);
+  document.getElementById("monday-modal-overlay").addEventListener("click",(e)=>{
+    if(e.target===document.getElementById("monday-modal-overlay")) closeMondayModal();
+  });
+  document.getElementById("btn-new").addEventListener("click",()=>{
+    document.getElementById("reset-confirm").style.display="flex";
+  });
+  document.getElementById("btn-new2").addEventListener("click",()=>{
+    document.getElementById("reset-confirm").style.display="flex";
+    document.getElementById("reset-confirm").scrollIntoView({behavior:"smooth"});
+  });
+
+  // Update history button count
+  const count=inspections.length;
+  if(count>0) document.getElementById("btn-history").textContent="📋 History ("+count+")";
+
+  document.getElementById("sentinel-copy").textContent="© "+new Date().getFullYear()+" Sarasota Cleaning. All rights reserved.";
+});
+</script>
+</body>
+</html>
