@@ -27,7 +27,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-body);background:var(--green-bg);color:var(--text);min-height:100vh}
-button{cursor:pointer;font-family:var(--font-mono);transition:opacity .15s,background .15s}
+button{cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;transition:opacity .15s,background .15s}
 button:hover{opacity:.85}
 input,textarea{font-family:var(--font-body);color:var(--text)}
 textarea{resize:vertical}
@@ -52,43 +52,62 @@ textarea{resize:vertical}
 /* Tabs */
 .tabs{display:flex;gap:2px;overflow-x:auto;padding-bottom:0;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab-btn{background:transparent;color:var(--gray);border:none;padding:8px 12px;border-radius:6px 6px 0 0;font-size:12px;font-weight:400;white-space:nowrap;font-family:var(--font-mono)}
-.tab-btn.active{color:#fff;font-weight:700}
+.tab-btn{background:transparent;color:var(--gray);border:none;padding:9px 14px;border-radius:6px 6px 0 0;font-size:12px;font-weight:500;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:0.01em;transition:color .15s,background .15s}
+.tab-btn:hover{color:var(--text);background:rgba(255,255,255,.12)}
+.tab-btn.active{color:#fff;font-weight:700;background:rgba(255,255,255,.08)}
 
 /* Body */
 #app-body{max-width:960px;margin:0 auto;padding:18px 14px 80px}
 
 /* Cards */
 .card{background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);margin-bottom:14px;overflow:hidden}
-.card-head{padding:11px 16px;background:#f9fafb;border-bottom:1px solid var(--border);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-family:var(--font-mono);color:var(--faint)}
+.card-head{padding:11px 16px;background:#f9fafb;border-bottom:1px solid var(--border);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:600;color:#9ca3af}
 .card-body{padding:16px}
 
 /* Banner */
 .scenario-banner{border-left:4px solid #ccc;background:#fff;border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.scenario-eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-family:var(--font-mono);margin-bottom:4px}
+.scenario-eyebrow{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:600;margin-bottom:4px}
 .scenario-text{font-size:13px;color:var(--subtext);line-height:1.65}
 
 /* Fields grid */
 .fields-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
-.field-label{font-size:10px;color:var(--gray);font-family:var(--font-mono);letter-spacing:.08em;margin-bottom:5px}
+.field-label{font-size:11px;color:#6b7280;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:600;letter-spacing:.03em;margin-bottom:5px;text-transform:uppercase}
 .field-input{width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;outline:none;transition:border-color .15s}
 .field-input:focus{border-color:var(--green-lt)}
 
 /* Action bar */
-.action-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.btn-print{background:#1f2937;color:#fff;border:none;border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700}
-.btn-email{color:#fff;border:none;border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700}
-.btn-save{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd);border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700}
-.btn-save.flash{background:var(--green);color:#fff}
-.btn-new{background:var(--red-bg);color:var(--red);border:1px solid #fecaca;border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700}
-.btn-email.flash{background:var(--green)!important}
+.action-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch;margin-bottom:14px}
+/* Shared button base — all action buttons get identical height, font, radius */
+.btn-print,.btn-email,.btn-save,.btn-new,.btn-monday{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  height:44px;padding:0 18px;border-radius:8px;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:13px;font-weight:600;letter-spacing:0.01em;
+  cursor:pointer;border:none;transition:filter .15s,transform .1s,box-shadow .15s;
+  white-space:nowrap;-webkit-tap-highlight-color:transparent;
+}
+.btn-print,.btn-email,.btn-save,.btn-new,.btn-monday{box-shadow:0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.08)}
+.btn-print:hover,.btn-email:hover,.btn-save:hover,.btn-new:hover,.btn-monday:hover{filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.16)}
+.btn-print:active,.btn-email:active,.btn-save:active,.btn-new:active,.btn-monday:active{transform:translateY(0);filter:brightness(.95)}
+/* Primary action group: deep forest tones, matching the app's green identity */
+.btn-print{background:#1a2e1a;color:#e8f5e8;border:1px solid #2d4a2d}
+.btn-email{color:#fff;border:1px solid rgba(255,255,255,.12)}
+/* Save: solid filled green — the primary CTA */
+.btn-save{background:var(--green);color:#fff;border:1px solid #14532d}
+.btn-save.flash{background:#14532d;color:#fff}
+/* New: neutral outline — secondary action */
+.btn-new{background:#fff;color:#374151;border:1.5px solid #d1d5db}
+.btn-new:hover{background:#f9fafb;border-color:#9ca3af}
+/* Monday: distinctive accent */
+.btn-monday{background:#f94f69;color:#fff;border:1px solid #e03355}
+.btn-email.flash{filter:brightness(.85)!important}
 .action-counts{margin-left:auto;display:flex;gap:12px;font-size:12px;font-family:var(--font-mono)}
 .cnt-done{color:var(--green);font-weight:700}
 .cnt-redo{color:var(--amber);font-weight:700}
 .cnt-skip{color:var(--gray)}
 
 /* Legend */
-.legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:11px;font-family:var(--font-mono);color:var(--faint);margin-bottom:14px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:11px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:500;color:var(--faint);margin-bottom:14px}
 .legend-pill{padding:2px 10px;border-radius:20px;font-weight:700;font-size:11px}
 
 /* Category block */
@@ -101,7 +120,7 @@ textarea{resize:vertical}
 .cat-name{font-size:14px;font-weight:700;color:var(--text)}
 .cat-count{font-size:10px;color:#d1d5db;font-family:var(--font-mono)}
 .cat-pills{display:flex;gap:6px;align-items:center}
-.cat-pill{font-size:10px;padding:2px 8px;border-radius:20px;font-family:var(--font-mono)}
+.cat-pill{font-size:11px;padding:2px 9px;border-radius:20px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:600;letter-spacing:.01em}
 .cat-pill.redo{background:var(--amber-bg);color:var(--amber)}
 .cat-pill.done{background:var(--green-bg);color:var(--green)}
 .cat-chevron{color:#d1d5db;font-size:14px;margin-left:4px;transition:transform .2s}
@@ -112,34 +131,51 @@ textarea{resize:vertical}
 .item-row:last-child{border-bottom:none}
 .item-row.done-row{background:#f8fff8}
 .item-row.redo-row{background:#fffdf0}
-.item-main{padding:9px 16px;display:flex;align-items:center;gap:10px}
-.item-bar{width:3px;align-self:stretch;border-radius:2px;flex-shrink:0;background:#e5e7eb}
+.item-main{padding:11px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.item-main-top{display:contents}
+.item-bar{width:3px;align-self:stretch;border-radius:2px;flex-shrink:0;background:#e5e7eb;min-height:20px}
 .item-bar.scored-done{background:var(--green)}
 .item-bar.scored-redo{background:#f59e0b}
 .item-bar.scored-skip{background:var(--gray)}
-.item-label{flex:1;font-size:13px;color:#374151;line-height:1.5}
+.item-label{flex:1;min-width:180px;font-size:14px;color:#1f2937;line-height:1.5;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .item-icons{font-size:10px;color:var(--faint);font-family:var(--font-mono);margin-left:6px}
-.item-btns{display:flex;gap:4px;flex-shrink:0;align-items:center}
-.score-btn{background:#f9fafb;color:var(--faint);border:1px solid var(--border);border-radius:5px;padding:5px 9px;font-size:10px;font-weight:700}
-.score-btn.active-done{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
-.score-btn.active-redo{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-bd)}
-.score-btn.active-skip{background:var(--gray-bg);color:var(--gray);border-color:#d1d5db}
-.note-toggle{background:#f9fafb;color:var(--gray);border:1px solid var(--border);border-radius:5px;padding:5px 8px;font-size:12px}
-.note-toggle.open{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+.item-btns{display:flex;gap:6px;flex-shrink:0;align-items:center;flex-wrap:wrap;margin-top:2px}
+.score-btn{
+  background:#f1f5f1;color:#6b7280;
+  border:1.5px solid #d1d5db;border-radius:8px;
+  padding:9px 14px;font-size:13px;font-weight:600;
+  min-height:44px;min-width:72px;text-align:center;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  letter-spacing:0.01em;
+  cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent;
+}
+.score-btn:hover{background:#e5ece5;color:#374151;border-color:#9ca3af}
+/* Active states: solid fill, white text — maximum contrast */
+.score-btn.active-done{background:#166534;color:#fff;border-color:#14532d;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
+.score-btn.active-redo{background:#b45309;color:#fff;border-color:#92400e;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
+.score-btn.active-skip{background:#4b5563;color:#fff;border-color:#374151;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
+.note-toggle{
+  background:#f9fafb;color:#9ca3af;
+  border:1.5px solid #e5e7eb;border-radius:8px;
+  padding:9px 12px;font-size:16px;
+  min-height:44px;min-width:44px;text-align:center;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  cursor:pointer;transition:all .12s;-webkit-tap-highlight-color:transparent;
+}
+.note-toggle:hover{background:#eff6ff;color:#3b82f6;border-color:#bfdbfe}
+.note-toggle.open{background:#eff6ff;color:#2563eb;border-color:#93c5fd}
 
 /* Note panel */
 .note-panel{padding:0 16px 12px 29px;display:flex;flex-direction:column;gap:8px}
-.note-textarea{width:100%;background:#fff;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:12px;outline:none;min-height:60px;color:var(--text);font-family:var(--font-body)}
-.note-textarea:focus{border-color:var(--green-lt)}
-.photo-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn-photo{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:700}
-.photo-thumb{height:48px;border-radius:4px;border:1px solid var(--border);object-fit:cover}
-.btn-rm-photo{background:var(--red-bg);color:var(--red);border:1px solid #fecaca;border-radius:5px;padding:5px 8px;font-size:11px}
+.note-textarea{width:100%;background:#fafafa;border:1px solid var(--border);border-radius:6px;padding:9px 12px;font-size:13px;outline:none;min-height:64px;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5;transition:border-color .15s}
+.note-textarea:focus{border-color:var(--green-lt);background:#fff}
+.photo-row{display:none}
+.btn-photo{display:none}
+.photo-thumb{display:none}
+.btn-rm-photo{display:none}
 
-/* Monday.com button */
-.btn-monday{background:#f94f69;color:#fff;border:none;border-radius:7px;padding:9px 15px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+/* Monday.com button — defined in action bar block above */
 .btn-monday:disabled{opacity:.5;cursor:not-allowed}
-.btn-monday .mon-icon{font-size:14px}
 
 /* Monday settings modal */
 #monday-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center}
@@ -164,7 +200,14 @@ textarea{resize:vertical}
 .cat-photo-section{border-top:1px solid var(--border);padding:12px 16px;background:#f9fafb}
 .cat-photo-label{font-size:10px;font-family:var(--font-mono);color:var(--faint);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
 .cat-photo-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn-cat-photo{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:6px;padding:7px 13px;font-size:11px;font-weight:700}
+.btn-cat-photo{
+  background:#f8faff;color:#1d4ed8;
+  border:1.5px dashed #bfdbfe;border-radius:8px;
+  padding:10px 18px;font-size:13px;font-weight:600;min-height:44px;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  -webkit-tap-highlight-color:transparent;transition:all .15s;
+}
+.btn-cat-photo:hover{background:#eff6ff;border-color:#93c5fd;border-style:solid}
 .cat-photo-thumb-wrap{position:relative;display:inline-block}
 .cat-photo-thumb{height:56px;width:56px;border-radius:5px;border:1px solid var(--border);object-fit:cover;cursor:pointer}
 .btn-rm-cat-photo{position:absolute;top:-5px;right:-5px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;line-height:18px;text-align:center;padding:0;font-weight:700}
@@ -338,7 +381,7 @@ textarea{resize:vertical}
   <div class="action-bar no-print">
     <button class="btn-print" onclick="window.print()">🖨 Print / PDF</button>
     <button class="btn-email" id="btn-email">✉ Copy for Email</button>
-    <button class="btn-monday no-print" id="btn-monday">📤 Export to monday</button>
+    <button class="btn-monday no-print" id="btn-monday">📤 Export to Monday</button>
     <button class="btn-save" id="btn-save">💾 Save</button>
     <button class="btn-new" id="btn-new">↺ New</button>
     <div class="action-counts" id="action-counts" style="display:none">
@@ -352,9 +395,9 @@ textarea{resize:vertical}
   <div id="reset-confirm" style="display:none">
     <div class="msg">Start a fresh inspection?</div>
     <div class="btns">
-      <button onclick="saveFirst()" style="background:var(--green);color:#fff;border:none;border-radius:6px;padding:8px 13px;font-size:12px;font-weight:700;font-family:var(--font-mono)">Save first, then reset</button>
-      <button onclick="doReset()" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:8px 13px;font-size:12px;font-weight:700;font-family:var(--font-mono)">Reset without saving</button>
-      <button onclick="document.getElementById('reset-confirm').style.display='none'" style="background:#f3f4f6;color:#374151;border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:12px;font-family:var(--font-mono)">Cancel</button>
+      <button onclick="saveFirst()" style="background:var(--green);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">Save first, then reset</button>
+      <button onclick="doReset()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">Reset without saving</button>
+      <button onclick="document.getElementById('reset-confirm').style.display='none'" style="background:#fff;color:#374151;border:1.5px solid #d1d5db;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:500;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">Cancel</button>
     </div>
   </div>
 
@@ -411,7 +454,7 @@ textarea{resize:vertical}
     <div class="action-bar no-print">
       <button class="btn-print" onclick="window.print()">🖨 Print / PDF</button>
       <button class="btn-email" id="btn-email2">✉ Copy for Email</button>
-      <button class="btn-monday no-print" id="btn-monday2">📤 Export to monday</button>
+      <button class="btn-monday no-print" id="btn-monday2">📤 Export to Monday</button>
       <button class="btn-save" id="btn-save2">💾 Save</button>
       <button class="btn-new" id="btn-new2">↺ New Inspection</button>
     </div>
@@ -978,22 +1021,20 @@ function renderCategories(){
 
       rowDiv.innerHTML=`
         <div class="item-main">
-          <div class="item-bar${sc?" scored-"+sc:""}"></div>
-          <div class="item-label">${lbl}${(hasNote||hasPhoto)?`<span class="item-icons">${hasPhoto?"📷":""} ${hasNote?"📝":""}</span>`:""}
+          <div class="item-main-top">
+            <div class="item-bar${sc?" scored-"+sc:""}"></div>
+            <div class="item-label">${lbl}${(hasNote||hasPhoto)?`<span class="item-icons">${hasPhoto?"📷":""} ${hasNote?"📝":""}</span>`:""}</div>
+            <button class="note-toggle no-print${noteOpen?" open":""}" title="Note/Photo">${noteOpen?"▲":"＋"}</button>
           </div>
           <div class="item-btns">
             <button class="score-btn${sc==="done"?" active-done":""}" data-val="done">✓ Done</button>
             <button class="score-btn${sc==="redo"?" active-redo":""}" data-val="redo">↺ Redo</button>
             <button class="score-btn${sc==="skip"?" active-skip":""}" data-val="skip">— Skip</button>
-            <button class="note-toggle no-print${noteOpen?" open":""}" title="Note/Photo">${noteOpen?"▲":"＋"}</button>
           </div>
         </div>
         <div class="note-panel" style="${noteOpen?"":"display:none"}">
           <textarea class="note-textarea" placeholder="Add a note about this item...">${state.notes[ik]||""}</textarea>
-          <div class="photo-row">
-            <button class="btn-photo">${hasPhoto?"📷 Replace Photo":"📷 Add Photo"}</button>
-            ${hasPhoto?`<img class="photo-thumb" src="${state.photos[ik]}" alt="proof"/><button class="btn-rm-photo">Remove</button>`:""}
-          </div>
+
         </div>
       `;
 
@@ -1026,27 +1067,7 @@ function renderCategories(){
         });
       }
 
-      // photo
-      const btnPhoto = rowDiv.querySelector(".btn-photo");
-      if(btnPhoto){
-        btnPhoto.addEventListener("click",()=>{
-          const inp=document.createElement("input");
-          inp.type="file"; inp.accept="image/*"; inp.capture="environment";
-          inp.onchange=()=>{
-            const file=inp.files[0]; if(!file)return;
-            const reader=new FileReader();
-            reader.onload=e=>{ state.photos[ik]=e.target.result; persist(); renderCategories(); };
-            reader.readAsDataURL(file);
-          };
-          inp.click();
-        });
-      }
-
-      // remove photo
-      const btnRm = rowDiv.querySelector(".btn-rm-photo");
-      if(btnRm){
-        btnRm.addEventListener("click",()=>{ delete state.photos[ik]; persist(); renderCategories(); });
-      }
+      // per-item photos removed — use category photo section below
 
       itemsWrap.appendChild(rowDiv);
     });
@@ -1072,9 +1093,13 @@ function renderCategories(){
     // add photo
     photoSection.querySelector(".btn-cat-photo").addEventListener("click", () => {
       const inp = document.createElement("input");
-      inp.type = "file"; inp.accept = "image/*"; inp.capture = "environment"; inp.multiple = true;
-      inp.onchange = () => {
-        const files = Array.from(inp.files);
+      inp.type = "file"; inp.accept = "image/*"; inp.multiple = true;
+      inp.style.cssText = "position:fixed;top:-9999px;left:-9999px;opacity:0";
+      document.body.appendChild(inp);
+      inp.addEventListener("change", () => {
+        const files = inp.files ? Array.from(inp.files) : [];
+        document.body.removeChild(inp);
+        if(!files.length) return;
         let remaining = files.length;
         files.forEach(file => {
           const reader = new FileReader();
@@ -1087,7 +1112,7 @@ function renderCategories(){
           };
           reader.readAsDataURL(file);
         });
-      };
+      });
       inp.click();
     });
 
@@ -1655,19 +1680,19 @@ async function exportToMonday(){
 
     ["btn-monday","btn-monday2"].forEach(id=>{
       const b=document.getElementById(id);
-      if(b){ b.disabled=false; b.textContent="✓ Exported!"; b.style.background="#166534"; }
+      if(b){ b.disabled=false; b.textContent="✓ Exported to Monday"; b.style.background="#166834"; }
     });
     setTimeout(()=>{
       ["btn-monday","btn-monday2"].forEach(id=>{
         const b=document.getElementById(id);
-        if(b){ b.textContent="📤 Export to monday"; b.style.background=""; }
+        if(b){ b.textContent="📤 Export to Monday"; b.style.background=""; }
       });
     }, 3500);
 
   } catch(err){
     ["btn-monday","btn-monday2"].forEach(id=>{
       const b=document.getElementById(id);
-      if(b){ b.disabled=false; b.textContent="📤 Export to monday"; b.style.background=""; }
+      if(b){ b.disabled=false; b.textContent="📤 Export to Monday"; b.style.background=""; }
     });
     // Show error in a friendly way
     const msg = err.message||"Unknown error";
